@@ -1,15 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getCurrentUser, signOut, onAuthStateChange } from '@/lib/auth';
+import { getCurrentUser, onAuthStateChange } from '@/lib/auth';
 import type { User } from '@supabase/supabase-js';
 import Link from 'next/link';
+import UserDropdown from './components/UserDropdown';
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -23,11 +22,6 @@ export default function Home() {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.refresh();
-  };
 
   return (
     <div className="min-h-screen">
@@ -48,15 +42,7 @@ export default function Home() {
               {loading ? (
                 <div className="text-gray-400">...</div>
               ) : user ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-600">{user.email}</span>
-                  <button
-                    onClick={handleSignOut}
-                    className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-                  >
-                    退出
-                  </button>
-                </div>
+                <UserDropdown user={user} />
               ) : (
                 <Link
                   href="/auth/login"
