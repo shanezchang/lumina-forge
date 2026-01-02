@@ -13,6 +13,7 @@ import {
   type Profile 
 } from '@/lib/profile';
 import { useToast } from '@/app/components/Toast';
+import Navbar from '@/app/components/Navbar';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   
   const [username, setUsername] = useState('');
@@ -170,8 +171,10 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">账号设置</h1>
@@ -303,6 +306,7 @@ export default function AccountPage() {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

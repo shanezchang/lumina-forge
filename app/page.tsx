@@ -1,60 +1,9 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { getCurrentUser, onAuthStateChange } from '@/lib/auth';
-import type { User } from '@supabase/supabase-js';
-import Link from 'next/link';
-import UserDropdown from './components/UserDropdown';
+import Navbar from './components/Navbar';
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getCurrentUser().then((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b backdrop-blur-sm sticky top-0 z-10" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--card-bg)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="text-xl font-semibold tracking-tight">Lumina Forge</div>
-            <nav className="flex gap-8 items-center">
-              <a href="#" className="relative group transition-colors hover:text-gray-600">
-                Home
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all group-hover:w-full"></span>
-              </a>
-              <a href="#" className="relative group transition-colors hover:text-gray-600">
-                About
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all group-hover:w-full"></span>
-              </a>
-              {loading ? (
-                <div className="text-gray-400">...</div>
-              ) : user ? (
-                <UserDropdown user={user} />
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors"
-                >
-                  登录
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <main>
