@@ -1,4 +1,34 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser, signOut, onAuthStateChange } from '@/lib/auth';
+import type { User } from '@supabase/supabase-js';
+import Link from 'next/link';
+
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.refresh();
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -6,7 +36,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="text-xl font-semibold tracking-tight">Lumina Forge</div>
-            <nav className="flex gap-8">
+            <nav className="flex gap-8 items-center">
               <a href="#" className="relative group transition-colors hover:text-gray-600">
                 Home
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all group-hover:w-full"></span>
@@ -15,6 +45,26 @@ export default function Home() {
                 About
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all group-hover:w-full"></span>
               </a>
+              {loading ? (
+                <div className="text-gray-400">...</div>
+              ) : user ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600">{user.email}</span>
+                  <button
+                    onClick={handleSignOut}
+                    className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                  >
+                    退出
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors"
+                >
+                  登录
+                </Link>
+              )}
             </nav>
           </div>
         </div>
